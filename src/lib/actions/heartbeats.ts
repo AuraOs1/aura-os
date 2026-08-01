@@ -8,7 +8,6 @@ import { type AgentStatus, type TaskStatus } from "@prisma/client";
 
 export async function triggerAgentHeartbeat(agentId: string) {
   try {
-    // 1. Fetch agent with their assigned tasks and recent memories
     const agent = await prisma.agent.findUnique({
       where: { id: agentId },
       include: {
@@ -36,7 +35,6 @@ export async function triggerAgentHeartbeat(agentId: string) {
       throw new Error("Agent not found");
     }
 
-    // Update agent status to WORKING
     await prisma.agent.update({
       where: { id: agentId },
       data: { status: "WORKING" as AgentStatus },
@@ -55,7 +53,6 @@ export async function triggerAgentHeartbeat(agentId: string) {
       actionName = "EXECUTE_TASK";
       completionPrompt = `Current Assigned Task: ${activeTask.title}\nDescription: ${activeTask.description || "No description provided."}\n\nPerform this task. Once completed, indicate how you completed it. Your response will be logged as system telemetry.`;
       
-      // Determine next task state transition
       nextStatus = activeTask.status === "TODO" ? "IN_PROGRESS" : "DONE";
       logDetails = `Executed task: "${activeTask.title}". Transitioning status from ${activeTask.status} to ${nextStatus}.`;
     } else {
@@ -63,7 +60,6 @@ export async function triggerAgentHeartbeat(agentId: string) {
       logDetails = "Scanned environment and checked active logs. No tasks in queue.";
     }
 
-    // 2. Call the AI Provider completion route
     const aiResult = await generateCompletion(
       agent.modelProvider,
       agent.modelName,
@@ -72,9 +68,7 @@ export async function triggerAgentHeartbeat(agentId: string) {
       agent.temperature
     );
 
-    // 3. Perform database operations in transaction
     await prisma.$transaction(async (tx) => {
-      // Create heartbeat log
       await tx.heartbeatLog.create({
         data: {
           agentId,
@@ -85,7 +79,6 @@ export async function triggerAgentHeartbeat(agentId: string) {
         },
       });
 
-      // Inject memory node
       await tx.agentMemory.create({
         data: {
           agentId,
@@ -96,7 +89,6 @@ export async function triggerAgentHeartbeat(agentId: string) {
         },
       });
 
-      // Update task status if applicable
       if (activeTask && nextStatus) {
         await tx.task.update({
           where: { id: activeTask.id },
@@ -104,27 +96,35 @@ export async function triggerAgentHeartbeat(agentId: string) {
         });
       }
 
-      // Reset agent status to IDLE
       await tx.agent.update({
         where: { id: agentId },
         data: { status: "IDLE" as AgentStatus },
       });
     });
 
+    // Autonomous GitHub Auto-Sync: When agent finishes a task, auto-commit & push to GitHub
+    if (activeTask && nextStatus === "DONE") {
+      try {
+        const { syncCodebaseToGitHub } = await import("@/lib/actions/gitSync");
+        await syncCodebaseToGitHub(`Agent ${agent.name} (${agent.role}) completed: ${activeTask.title}`);
+      } catch (e) {
+        console.error("Autonomous GitHub sync notice:", e);
+      }
+    }
+
     revalidatePath("/agents");
     revalidatePath("/tasks");
     revalidatePath("/dashboard");
     return { success: true, text: aiResult.text, cost: aiResult.cost };
   } catch (error: unknown) {
-    // Reset agent status in case of failure
     try {
       await prisma.agent.update({
         where: { id: agentId },
         data: { status: "IDLE" as AgentStatus },
       });
-    } catch {}
-    
-    const message = error instanceof Error ? error.message : "Failed to run heartbeat pulse";
+    } catch (_) {}
+
+    const message = error instanceof Error ? error.message : "Failed to execute agent heartbeat";
     return { success: false, error: message };
   }
 }
@@ -136,16 +136,14 @@ export async function triggerCompanyHeartbeats(companyId: string) {
       select: { id: true },
     });
 
-    // Execute heartbeats in parallel
-    const pulses = agents.map(a => triggerAgentHeartbeat(a.id));
-    const results = await Promise.all(pulses);
+    const results = await Promise.all(
+      agents.map((agent) => triggerAgentHeartbeat(agent.id))
+    );
 
-    const successful = results.filter(r => r.success).length;
-    
+    revalidatePath("/dashboard");
     revalidatePath("/agents");
     revalidatePath("/tasks");
-    revalidatePath("/dashboard");
-    return { success: true, message: `Pulsed ${successful} / ${agents.length} active agents successfully.` };
+    return { success: true, count: results.length };
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Failed to trigger company heartbeats";
     return { success: false, error: message };
@@ -156,9 +154,7 @@ export async function getHeartbeatLogs(companyId: string, limit = 20) {
   try {
     const logs = await prisma.heartbeatLog.findMany({
       where: {
-        agent: {
-          companyId,
-        },
+        agent: { companyId },
       },
       include: {
         agent: {
@@ -173,9 +169,10 @@ export async function getHeartbeatLogs(companyId: string, limit = 20) {
       },
       take: limit,
     });
+
     return { success: true, logs };
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Failed to retrieve telemetry logs";
+    const message = error instanceof Error ? error.message : "Failed to retrieve heartbeat logs";
     return { success: false, error: message };
   }
 }
