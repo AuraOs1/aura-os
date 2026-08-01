@@ -1,0 +1,355 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum AgentRole {
+  CHIEF_OF_STAFF
+  CEO
+  CTO
+  COO
+  CMO
+  CFO
+  HEAD_OF_PRODUCT
+  HEAD_OF_DESIGN
+  HEAD_OF_RESEARCH
+  HEAD_OF_GROWTH
+  HEAD_OF_CUSTOMER_SUCCESS
+  HR
+  PRODUCT_MANAGER
+  PROJECT_MANAGER
+  SOFTWARE_ENGINEER
+  BACKEND_ENGINEER
+  FRONTEND_ENGINEER
+  UI_DESIGNER
+  UX_RESEARCHER
+  GRAPHIC_DESIGNER
+  MOTION_DESIGNER
+  VIDEO_EDITOR
+  COPYWRITER
+  SEO_EXPERT
+  RESEARCHER
+  CUSTOMER_SUPPORT
+  QA_ENGINEER
+  DEVOPS
+  FINANCE_ANALYST
+  SALES_AGENT
+  LEGAL_AGENT
+}
+
+enum AgentStatus {
+  IDLE
+  WORKING
+  SLEEPING
+}
+
+enum ProjectStatus {
+  BACKLOG
+  PLANNING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum TaskStatus {
+  BACKLOG
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  DONE
+  CANCELLED
+}
+
+enum TaskPriority {
+  NO_PRIORITY
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum GoalType {
+  COMPANY
+  DEPARTMENT
+  PROJECT
+  AGENT
+}
+
+enum GoalStatus {
+  PENDING
+  IN_PROGRESS
+  ACHIEVED
+  FAILED
+}
+
+enum MemoryType {
+  SHORT
+  LONG
+  PROJECT
+  COMPANY
+  KNOWLEDGE
+}
+
+enum DocType {
+  WIKI
+  MARKDOWN
+  PDF
+  IMAGE
+  API_DOC
+}
+
+enum SenderType {
+  USER
+  AGENT
+}
+
+enum ChatType {
+  DIRECT
+  DEPARTMENT
+  COMPANY
+}
+
+model User {
+  id               String            @id @default(uuid())
+  email            String            @unique
+  name             String?
+  avatarUrl        String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  memberships      WorkspaceMember[]
+  createdWorkspaces Workspace[]     @relation("WorkspaceOwner")
+}
+
+model Workspace {
+  id          String            @id @default(uuid())
+  name        String
+  slug        String            @unique
+  ownerId     String
+  owner       User              @relation("WorkspaceOwner", fields: [ownerId], references: [id])
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  members     WorkspaceMember[]
+  invitations Invitation[]
+  companies   Company[]
+}
+
+model WorkspaceMember {
+  id          String     @id @default(uuid())
+  workspaceId String
+  workspace   Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role        MemberRole @default(MEMBER)
+  createdAt   DateTime   @default(now())
+
+  @@unique([workspaceId, userId])
+}
+
+model Invitation {
+  id          String     @id @default(uuid())
+  workspaceId String
+  workspace   Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  email       String
+  role        MemberRole @default(MEMBER)
+  token       String     @unique
+  expiresAt   DateTime
+  createdAt   DateTime   @default(now())
+}
+
+model Company {
+  id             String          @id @default(uuid())
+  workspaceId    String
+  workspace      Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name           String
+  tagline        String?
+  logoUrl        String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  departments    Department[]
+  agents         Agent[]
+  projects       Project[]
+  goals          Goal[]
+  knowledgeBases KnowledgeBase[]
+  chatSessions   ChatSession[]
+}
+
+model Department {
+  id          String    @id @default(uuid())
+  companyId   String
+  company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  createdAt   DateTime  @default(now())
+  agents      Agent[]
+  projects    Project[]
+  goals       Goal[]
+}
+
+model Agent {
+  id               String            @id @default(uuid())
+  companyId        String
+  company          Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  departmentId     String?
+  department       Department?       @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  name             String
+  avatarUrl        String?
+  role             AgentRole
+  managerId        String?
+  manager          Agent?            @relation("AgentManager", fields: [managerId], references: [id], onDelete: SetNull)
+  subordinates     Agent[]           @relation("AgentManager")
+  responsibilities String[]          @default([])
+  mission          String
+  status           AgentStatus       @default(IDLE)
+  modelProvider    String            @default("gemini")
+  modelName        String            @default("gemini-2.5-flash")
+  temperature      Float             @default(0.7)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  memories         AgentMemory[]
+  tasks            Task[]            @relation("AgentTasks")
+  goals            Goal[]
+  heartbeats       HeartbeatLog[]
+}
+
+model AgentMemory {
+  id        String     @id @default(uuid())
+  agentId   String
+  agent     Agent      @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  type      MemoryType
+  content   String
+  metadata  Json?      // Store context identifiers like projectId or ticketId
+  createdAt DateTime   @default(now())
+}
+
+model Project {
+  id           String        @id @default(uuid())
+  companyId    String
+  company      Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  departmentId String?
+  department   Department?   @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  name         String
+  description  String?
+  status       ProjectStatus @default(PLANNING)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  tasks        Task[]
+  goals        Goal[]
+}
+
+model Goal {
+  id           String      @id @default(uuid())
+  companyId    String
+  company      Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  projectId    String?
+  project      Project?    @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  agentId      String?
+  agent        Agent?      @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  type         GoalType
+  title        String
+  description  String?
+  status       GoalStatus  @default(PENDING)
+  parentId     String?
+  parent       Goal?       @relation("GoalHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  subGoals     Goal[]      @relation("GoalHierarchy")
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Task {
+  id          String       @id @default(uuid())
+  projectId   String?
+  project     Project?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  agentId     String?
+  agent       Agent?       @relation("AgentTasks", fields: [agentId], references: [id], onDelete: SetNull)
+  title       String
+  description String?
+  status      TaskStatus   @default(TODO)
+  priority    TaskPriority @default(NO_PRIORITY)
+  dueDate     DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  comments    TaskComment[]
+
+  // Self-referencing many-to-many relation for task dependency chains
+  dependencies Task[]      @relation("TaskDependencies")
+  dependents   Task[]      @relation("TaskDependencies")
+}
+
+model TaskComment {
+  id         String     @id @default(uuid())
+  taskId     String
+  task       Task       @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  authorType SenderType
+  authorId   String     // Can be User ID or Agent ID
+  content    String
+  createdAt  DateTime   @default(now())
+}
+
+model KnowledgeBase {
+  id          String     @id @default(uuid())
+  companyId   String
+  company     Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  createdAt   DateTime   @default(now())
+  documents   Document[]
+}
+
+model Document {
+  id              String        @id @default(uuid())
+  knowledgeBaseId String
+  knowledgeBase   KnowledgeBase @relation(fields: [knowledgeBaseId], references: [id], onDelete: Cascade)
+  title           String
+  content         String
+  type            DocType       @default(WIKI)
+  fileUrl         String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model ChatSession {
+  id          String        @id @default(uuid())
+  companyId   String
+  company     Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  type        ChatType
+  targetId    String        // Can be Agent ID, Department ID, or Company ID
+  createdAt   DateTime      @default(now())
+  messages    ChatMessage[]
+}
+
+model ChatMessage {
+  id         String      @id @default(uuid())
+  sessionId  String
+  session    ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  senderType SenderType
+  senderId   String      // User ID or Agent ID
+  content    String
+  createdAt  DateTime    @default(now())
+}
+
+model HeartbeatLog {
+  id         String   @id @default(uuid())
+  agentId    String
+  agent      Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  timestamp  DateTime @default(now())
+  action     String   // e.g. "WAKE", "READ_MEMORY", "EXECUTE", "SLEEP"
+  details    String?
+  tokenUsage Int      @default(0)
+  cost       Float    @default(0.0)
+}
+
