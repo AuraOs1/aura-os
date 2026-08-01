@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { CreateAgentSchema } from "@/lib/schemas";
-import { type AgentRole } from "@prisma/client";
 
 export async function createAgent(rawInput: unknown) {
   try {
@@ -14,10 +13,11 @@ export async function createAgent(rawInput: unknown) {
         companyId: validated.companyId,
         departmentId: validated.departmentId,
         name: validated.name,
-        role: validated.role as AgentRole,
+        role: validated.role as any,
         managerId: validated.managerId,
         responsibilities: validated.responsibilities,
         mission: validated.mission,
+        status: (validated as any).status || "IDLE",
         modelProvider: validated.modelProvider,
         modelName: validated.modelName,
         temperature: validated.temperature,
@@ -28,7 +28,7 @@ export async function createAgent(rawInput: unknown) {
     revalidatePath("/dashboard");
     return { success: true, agent };
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Failed to hire agent";
+    const message = error instanceof Error ? error.message : "Failed to create agent";
     return { success: false, error: message };
   }
 }
@@ -38,13 +38,16 @@ export async function getAgents(companyId: string) {
     const agents = await prisma.agent.findMany({
       where: { companyId },
       include: {
-        department: true,
-        manager: true,
+        department: {
+          select: { name: true },
+        },
+        manager: {
+          select: { name: true },
+        },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
     });
+
     return { success: true, agents };
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Failed to retrieve agents";
@@ -58,7 +61,7 @@ export async function getManagers(companyId: string) {
       where: {
         companyId,
         role: {
-          in: ["CEO", "CTO", "COO", "CMO", "CFO", "PRODUCT_MANAGER", "PROJECT_MANAGER"],
+          in: ["CHIEF_OF_STAFF" as any, "CEO" as any, "CTO" as any, "CMO" as any, "COO" as any, "CFO" as any, "HR" as any, "PRODUCT_MANAGER" as any, "PROJECT_MANAGER" as any],
         },
       },
       select: {
@@ -67,6 +70,7 @@ export async function getManagers(companyId: string) {
         role: true,
       },
     });
+
     return { success: true, managers };
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Failed to retrieve managers";
@@ -74,18 +78,18 @@ export async function getManagers(companyId: string) {
   }
 }
 
-export async function toggleAgentStatus(agentId: string, currentStatus: string) {
+export async function toggleAgentStatus(agentId: string, status: "IDLE" | "WORKING" | "SLEEPING") {
   try {
-    const nextStatus = currentStatus === "WORKING" ? "IDLE" : "WORKING";
     const agent = await prisma.agent.update({
       where: { id: agentId },
-      data: { status: nextStatus as any },
+      data: { status },
     });
+
     revalidatePath("/agents");
     revalidatePath("/dashboard");
     return { success: true, agent };
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Failed to toggle agent status";
+    const message = error instanceof Error ? error.message : "Failed to update agent status";
     return { success: false, error: message };
   }
 }
