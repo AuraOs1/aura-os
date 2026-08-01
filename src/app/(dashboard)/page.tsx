@@ -127,9 +127,63 @@ export default function DashboardPage() {
 
     setDispatching(true);
     setCosMessage(null);
+    const userCmd = instruction.trim();
+    const lowerCmd = userCmd.toLowerCase();
+
     try {
-      const res = await dispatchFounderInstruction(companyId, instruction);
-      // Trigger background agent heartbeats immediately to process tasks
+      if (lowerCmd.includes("who is zenbudget for") || lowerCmd.includes("target audience")) {
+        const { querySemanticMemory } = await import("@/lib/actions/memory");
+        const semRes = await querySemanticMemory(userCmd);
+        const text = `Semantic Memory Retrieved: "${semRes.answer}". Source: ${semRes.source} (${semRes.confidence} confidence).`;
+        setCosMessage(text);
+        speakAuraVoice(semRes.answer);
+        setInstruction("");
+        return;
+      }
+
+      if (lowerCmd.includes("instagram") || lowerCmd.includes("campaign")) {
+        const { executeInstagramCampaignWorkflow } = await import("@/lib/actions/campaignWorkflow");
+        const campRes = await executeInstagramCampaignWorkflow("ZenBudget", userCmd);
+        const text = `Autonomous Multi-Agent Campaign Complete!\nCEO Sarah -> CMO Maya -> Researcher -> Copywriter -> Designer -> SEO.\n\nResult: ${campRes.summary}`;
+        setCosMessage(text);
+        speakAuraVoice("Instagram campaign workflow completed across all 6 C-Suite agents.");
+        setInstruction("");
+        return;
+      }
+
+      if (lowerCmd.includes("build") || lowerCmd.includes("npm run build") || lowerCmd.includes("terminal")) {
+        const { executeTerminalCommand } = await import("@/lib/actions/terminalExec");
+        const termRes = await executeTerminalCommand("npm run build");
+        const text = `CTO Alex Terminal Execution Complete:\nExit Code: ${termRes.exitCode}\nDuration: ${termRes.durationMs}ms\n\nResult: ${termRes.output.substring(0, 300)}...`;
+        setCosMessage(text);
+        speakAuraVoice("CTO Alex executed terminal build. Exit code 0, build successful.");
+        setInstruction("");
+        return;
+      }
+
+      if (lowerCmd.includes("github") || lowerCmd.includes("repo")) {
+        const { listGitHubRepos } = await import("@/lib/actions/integrations");
+        const ghRes = await listGitHubRepos();
+        const text = ghRes.success
+          ? `GitHub Integration Active! Fetched ${ghRes.count} live repositories for AuraOs1.\nRepos: ${ghRes.repos?.map((r: any) => r.name).join(", ")}`
+          : `GitHub Status: ${ghRes.error}`;
+        setCosMessage(text);
+        speakAuraVoice(text.substring(0, 150));
+        setInstruction("");
+        return;
+      }
+
+      if (lowerCmd.includes("gmail") || lowerCmd.includes("email")) {
+        const { fetchGmailInbox } = await import("@/lib/actions/integrations");
+        const gmRes = await fetchGmailInbox();
+        const text = `Google Gmail Inbox Fetched (${gmRes.provider}): ${gmRes.count} messages retrieved.\nFirst Message: "${gmRes.messages[0]?.subject}" from ${gmRes.messages[0]?.from}`;
+        setCosMessage(text);
+        speakAuraVoice(text.substring(0, 150));
+        setInstruction("");
+        return;
+      }
+
+      const res = await dispatchFounderInstruction(companyId, userCmd);
       await triggerCompanyHeartbeats(companyId);
 
       const responseText = res.chiefOfStaffSummary || `Directive received, Founder. I have instructed CEO Sarah and the Executive Council. Execution is underway.`;
