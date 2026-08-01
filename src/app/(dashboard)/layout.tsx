@@ -2,7 +2,6 @@ import React from "react";
 import { Shell } from "@/components/layout/shell";
 import { ensureSeedData } from "@/lib/seed";
 import { prisma } from "@/lib/prisma";
-import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
@@ -11,17 +10,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = await cookies();
-  const session = cookieStore.get("aura_session");
-
-  if (!session || session.value !== "authenticated") {
-    cookieStore.set("aura_session", "authenticated", {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7
-    });
-  }
-
-  let companies = [];
+  let companies: any[] = [];
   try {
     // Ensure database seed records exist
     await ensureSeedData();
@@ -39,14 +28,6 @@ export default async function DashboardLayout({
     });
   } catch (err) {
     console.warn("Database query notice, using operational memory fallback:", err);
-    companies = [
-      {
-        id: "default-company-id",
-        name: "ZenBudget",
-        tagline: "Autonomous Budgeting & Financial Operating System",
-        workspaceId: "default-workspace-id",
-      }
-    ];
   }
 
   if (!companies || companies.length === 0) {
@@ -55,6 +36,24 @@ export default async function DashboardLayout({
         id: "default-company-id",
         name: "ZenBudget",
         tagline: "Autonomous Budgeting & Financial Operating System",
+        workspaceId: "default-workspace-id",
+      },
+      {
+        id: "aura-os-company-id",
+        name: "AURA OS",
+        tagline: "The AI Operating System for Autonomous Companies",
+        workspaceId: "default-workspace-id",
+      },
+      {
+        id: "leadflow-company-id",
+        name: "LeadFlow AI",
+        tagline: "Autonomous B2B Lead Engine & Acquisition Pipeline",
+        workspaceId: "default-workspace-id",
+      },
+      {
+        id: "csdesign-company-id",
+        name: "CS Design",
+        tagline: "Autonomous UI/UX Design & Studio Production",
         workspaceId: "default-workspace-id",
       }
     ];
