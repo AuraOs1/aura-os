@@ -1,0 +1,21 @@
+{
+  "geminiApiKey": "",
+  "openaiApiKey": "",
+  "anthropicApiKey": "",
+  "groqApiKey": "",
+  "ollamaEndpoint": "http://127.0.0.1:11434",
+  "googleClientId": "",
+  "googleClientSecret": "",
+  "githubClientId": "",
+  "githubClientSecret": "",
+  "metaAppId": "",
+  "metaAppSecret": "",
+  "googleConnected": false,
+  "githubConnected": true,
+  "metaConnected": false,
+  "youtubeConnected": false,
+  "googleAccessToken": "",
+  "googleRefreshToken": "",
+  "githubAccessToken": "",
+  "metaAccessToken": ""
+}
