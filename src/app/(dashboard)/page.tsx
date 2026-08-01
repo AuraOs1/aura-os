@@ -178,7 +178,13 @@ export default function DashboardPage() {
           <h1 className="text-3xl font-bold tracking-tight text-white mt-1">
             Good Morning, Chandan
           </h1>
-          <p className="text-sm text-zinc-400 mt-0.5">Single Interface active with Chief of Staff Aura. Switch brands anytime from top-left corner.</p>
+          <div className="flex items-center gap-2 mt-1.5">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Autonomous GitHub Auto-Sync: ACTIVE (AuraOs1/aura-os)</span>
+            </span>
+          </div>
+          <p className="text-sm text-zinc-400 mt-1">Single Interface active with Chief of Staff Aura. Switch brands anytime from top-left corner.</p>
         </div>
 
         {/* Live Audio Brief Trigger */}
