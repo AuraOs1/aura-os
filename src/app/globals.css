@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-border-custom: var(--border);
+  
+  --color-primary: var(--foreground);
+  --color-accent: #4ade80;
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  
+  --radius-2xl: 24px;
+  --radius-xl: 20px;
+  --radius-lg: 12px;
+  --radius-md: 8px;
+}
+
+:root {
+  --background: #09090b;
+  --surface: #111113;
+  --card: #18181b;
+  --foreground: #ffffff;
+  --muted-foreground: #a1a1aa;
+  --border: rgba(255, 255, 255, 0.08);
+}
+
+.light {
+  --background: #fafafa;
+  --surface: #f4f4f5;
+  --card: #ffffff;
+  --foreground: #09090b;
+  --muted-foreground: #52525b;
+  --border: rgba(0, 0, 0, 0.08);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Dynamic overrides for hardcoded dark background classes in light mode */
+.light [class*="bg-[#09090b]"] {
+  background-color: var(--background) !important;
+}
+.light [class*="bg-[#111113]"] {
+  background-color: var(--surface) !important;
+}
+.light [class*="bg-[#18181B]"] {
+  background-color: var(--card) !important;
+}
+
+/* Light mode overrides for borders */
+.light [class*="border-[rgba(255,255,255,"] {
+  border-color: var(--border) !important;
+}
+.light [class*="border-white/"] {
+  border-color: var(--border) !important;
+}
+
+/* Light mode overrides for text color */
+.light .text-white,
+.light .text-zinc-100,
+.light .text-zinc-200 {
+  color: var(--foreground) !important;
+}
+
+.light .text-zinc-300,
+.light .text-zinc-400,
+.light .text-zinc-500,
+.light .text-zinc-600 {
+  color: var(--muted-foreground) !important;
+}
+
+.light input,
+.light select,
+.light textarea {
+  background-color: var(--card) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border) !important;
+}
+
+.light ::placeholder {
+  color: #71717a !important;
+}
+
+
+/* Glassmorphism utilities */
+.glass-panel {
+  background: rgba(17, 17, 19, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+.glass-card {
+  background: rgba(24, 24, 27, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+}
+
+/* Linear-like glowing grids and patterns */
+.grid-bg {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+}
+
+.light .grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.015) 1px, transparent 1px);
+}
+
+.glow-btn {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.glow-btn::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(90deg, #4ade80, #22c55e);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.glow-btn:hover::after {
+  opacity: 1;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
