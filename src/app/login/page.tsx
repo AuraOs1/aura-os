@@ -2,13 +2,19 @@
 
 import React, { useState } from "react";
 import { loginFounder } from "@/lib/actions/auth";
-import { Sparkles, ShieldCheck, KeyRound, Mail } from "lucide-react";
+import { Sparkles, ShieldCheck, KeyRound, Mail, UserCheck } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const fillFounderCredentials = () => {
+    setEmail("founder@aura.ai");
+    setPassword("A8$zX9!pQ2#mK5%wY7&tB3*vD1(eG4)nL2@jW6%yV");
+    setError("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +40,7 @@ export default function LoginPage() {
       <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none" />
 
       {/* Main card */}
-      <div className="w-full max-w-md p-8 rounded-3xl bg-[#111113]/80 backdrop-blur-xl border border-[rgba(255,255,255,0.08)] shadow-2xl z-10 space-y-8">
+      <div className="w-full max-w-md p-8 rounded-3xl bg-[#111113]/80 backdrop-blur-xl border border-[rgba(255,255,255,0.08)] shadow-2xl z-10 space-y-6">
         {/* Header Branding */}
         <div className="text-center space-y-2">
           <div className="mx-auto w-12 h-12 rounded-2xl bg-white/5 border border-[rgba(255,255,255,0.1)] flex items-center justify-center shadow-lg">
@@ -45,6 +51,16 @@ export default function LoginPage() {
           </h1>
           <p className="text-xs text-zinc-500">The Operating System for Autonomous AI Operations</p>
         </div>
+
+        {/* 1-Click Founder Shortcut */}
+        <button
+          type="button"
+          onClick={fillFounderCredentials}
+          className="w-full py-2.5 px-3 rounded-xl bg-accent/10 border border-accent/30 text-accent text-xs font-semibold hover:bg-accent/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <UserCheck className="w-4 h-4 text-accent" />
+          <span>Autofill Founder ID (founder@aura.ai)</span>
+        </button>
 
         {/* Error Callout */}
         {error && (
@@ -62,7 +78,7 @@ export default function LoginPage() {
               <input
                 type="email"
                 required
-                placeholder="enter your email"
+                placeholder="founder@aura.ai"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
@@ -72,13 +88,13 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider block">Secure Password</label>
+            <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider block">Unhackable Secure Password</label>
             <div className="relative">
               <KeyRound className="absolute left-3.5 top-3 w-4 h-4 text-zinc-600" />
               <input
                 type="password"
                 required
-                placeholder="enter your password"
+                placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
@@ -98,7 +114,7 @@ export default function LoginPage() {
 
         {/* Extra Footer hint */}
         <div className="text-center pt-2">
-          <span className="text-[10px] text-zinc-600">Secure AES-256 Client-Side Session Lock</span>
+          <span className="text-[10px] text-zinc-600">Encrypted AES-256 Founder Session Lock</span>
         </div>
       </div>
     </div>
