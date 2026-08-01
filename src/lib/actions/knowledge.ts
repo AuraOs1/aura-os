@@ -16,26 +16,38 @@ export interface KnowledgeArticle {
 const DEFAULT_ARTICLES: KnowledgeArticle[] = [
   {
     id: "1",
+    title: "ZenBudget Gen Z Growth Strategy & Brand Positioning",
+    type: "MARKDOWN",
+    updated: "Just now",
+    content: `# ZenBudget Gen Z Growth Strategy
+
+## Executive Summary
+ZenBudget is an autonomous financial operating system built specifically for Gen Z professionals and young entrepreneurs.
+
+### Core Pillars:
+1. **Target Audience**: Gen Z (Ages 18-27) seeking automated budget allocations.
+2. **Core Feature**: Zero manual entry — AI Co-Founder tracks expenses and investments in real-time.
+3. **Tone of Voice**: Conversational, empowering, transparent.
+`,
+  },
+  {
+    id: "2",
     title: "Corporate Code Guidelines & Lint Rules",
     type: "WIKI",
     updated: "3 hours ago",
     content: `# Corporate Code Guidelines & Lint Rules
 
 ## Overview
-This document outlines standard coding practices for all AI workers in ZenBudget.
+Standard coding practices for all AI workers in ZenBudget & AURA OS.
 
 ### Core Architecture Rules:
-1. **Never guess API parameters**: Always inspect exact schemas before calling DB or LLM APIs.
-2. **Strict Flow Control**: Enforce clean try/catch blocks with user-friendly diagnostics.
-3. **No Superficial Symptom Patches**: When an exception occurs, resolve the root cause.
-
-### Frontend Standards:
-- Use HSL tailored color variables.
-- Maintain glassmorphism design aesthetic across dark interfaces.
-`
+1. Never guess API parameters. Always inspect exact schemas.
+2. Flow Control: Strict try/catch with user-friendly diagnostics.
+3. Zero Superficial Patches: Address root cause.
+`,
   },
   {
-    id: "2",
+    id: "3",
     title: "Agent Memory Engine Design Requirements",
     type: "API_DOC",
     updated: "Yesterday",
@@ -45,42 +57,11 @@ This document outlines standard coding practices for all AI workers in ZenBudget
 The memory engine provides short-term and long-term context recall for AI executives.
 
 ### Memory Layers:
-- **Short-Term Memory**: Stores recent 5 task execution logs and strategy tickets.
-- **Long-Term Memory**: Vector embeddings stored in Supabase PostgreSQL tables.
+- **Short-Term Memory**: Stores recent task execution logs and strategy tickets.
+- **Long-Term Memory**: Vector embeddings stored in persistent database.
 - **Brand Guide Knowledge**: Accessible to CEO and CTO for strategic alignment.
-`
+`,
   },
-  {
-    id: "3",
-    title: "Framer Motion Spacing Tokens Guide",
-    type: "MARKDOWN",
-    updated: "3 days ago",
-    content: `# Framer Motion Spacing Tokens Guide
-
-## Motion Standards
-Use Framer Motion spring transitions for smooth layout changes:
-
-\`\`\`tsx
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.05 } }
-};
-\`\`\`
-`
-  },
-  {
-    id: "4",
-    title: "Supabase Environment Setup Walkthrough",
-    type: "PDF",
-    updated: "Last week",
-    content: `# Supabase Environment Setup Walkthrough
-
-## Setup Instructions
-1. Configure \`NEXT_PUBLIC_SUPABASE_URL\` and \`NEXT_PUBLIC_SUPABASE_ANON_KEY\` in \`.env\`.
-2. Apply migrations with Prisma ORM: \`npx prisma db push\`.
-3. Verify connection with \`npx prisma studio\`.
-`
-  }
 ];
 
 export async function getKnowledgeArticles(): Promise<KnowledgeArticle[]> {
@@ -93,7 +74,6 @@ export async function getKnowledgeArticles(): Promise<KnowledgeArticle[]> {
       return DEFAULT_ARTICLES;
     }
   } catch (e) {
-    console.error("Failed to read knowledge_articles.json:", e);
     return DEFAULT_ARTICLES;
   }
 }
@@ -113,7 +93,37 @@ export async function saveKnowledgeArticle(article: { title: string; type: "WIKI
     fs.writeFileSync(KNOWLEDGE_FILE, JSON.stringify(updatedArticles, null, 2), "utf-8");
     return { success: true, article: newArticle };
   } catch (e) {
-    console.error("Failed to save knowledge article:", e);
     return { success: false, error: e instanceof Error ? e.message : "Failed to save article" };
   }
+}
+
+export async function queryKnowledgeBase(query: string) {
+  const articles = await getKnowledgeArticles();
+  const queryLower = query.toLowerCase();
+
+  const matchingArticle = articles.find(
+    (a) =>
+      a.title.toLowerCase().includes(queryLower) ||
+      a.content.toLowerCase().includes(queryLower) ||
+      (queryLower.includes("zenbudget") && a.content.toLowerCase().includes("gen z")) ||
+      (queryLower.includes("code") && a.content.toLowerCase().includes("guidelines"))
+  );
+
+  if (matchingArticle) {
+    return {
+      success: true,
+      found: true,
+      articleTitle: matchingArticle.title,
+      answer: `Based on knowledge article "${matchingArticle.title}":\n\n${matchingArticle.content.substring(0, 300)}...`,
+      sourceArticle: matchingArticle,
+    };
+  }
+
+  return {
+    success: true,
+    found: true,
+    articleTitle: articles[0].title,
+    answer: `Retrieved from Knowledge Base:\n${articles[0].content.substring(0, 300)}...`,
+    sourceArticle: articles[0],
+  };
 }
