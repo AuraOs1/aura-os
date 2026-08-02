@@ -173,6 +173,16 @@ export default function DashboardPage() {
         return;
       }
 
+      if (lowerCmd.includes("ad") || lowerCmd.includes("creative") || lowerCmd.includes("banner")) {
+        const { generateAdCreative } = await import("@/lib/actions/adCreative");
+        const adRes = await generateAdCreative("ZenBudget", "INSTAGRAM_POST", userCmd);
+        const text = `Watermark-Free High-Res Ad Creative Generated!\nBrand: ZenBudget | Platform: Instagram Post (1080x1080)\nSaved To: public${adRes.asset?.folderPath}\nHeadline: "${adRes.asset?.headline}"`;
+        setCosMessage(text);
+        speakAuraVoice("High resolution watermark free ad creative generated and saved in your local folder manager.");
+        setInstruction("");
+        return;
+      }
+
       if (lowerCmd.includes("gmail") || lowerCmd.includes("email")) {
         const { fetchGmailInbox } = await import("@/lib/actions/integrations");
         const gmRes = await fetchGmailInbox();
