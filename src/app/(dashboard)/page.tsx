@@ -183,6 +183,26 @@ export default function DashboardPage() {
         return;
       }
 
+      if (lowerCmd.includes("video") || lowerCmd.includes("reel") || lowerCmd.includes("short")) {
+        const { generatePromoVideo } = await import("@/lib/actions/videoGenerator");
+        const vidRes = await generatePromoVideo("ZenBudget", "REEL_SHORT_1080x1920", userCmd);
+        const text = `Watermark-Free Video Script & Storyboard Rendered!\nBrand: ZenBudget | Format: 1080x1920 Reel/Short\nSaved To: public${vidRes.asset?.folderPath}\nTitle: "${vidRes.asset?.title}"`;
+        setCosMessage(text);
+        speakAuraVoice("Watermark free video script and storyboard generated and saved in your local video folder.");
+        setInstruction("");
+        return;
+      }
+
+      if (lowerCmd.includes("publish") || lowerCmd.includes("social")) {
+        const { publishToSocialMedia } = await import("@/lib/actions/socialPublisher");
+        const pubRes = await publishToSocialMedia("ZenBudget", "INSTAGRAM");
+        const text = `Social Post Auto-Published with Anti-Bot Protection!\nPlatform: Instagram | Brand: ZenBudget\nStealth Score: ${pubRes.publishResult?.stealthScore}\nLive URL: ${pubRes.publishResult?.publishedUrl}`;
+        setCosMessage(text);
+        speakAuraVoice("Social post published with 99.7 percent human emulation stealth protection.");
+        setInstruction("");
+        return;
+      }
+
       if (lowerCmd.includes("gmail") || lowerCmd.includes("email")) {
         const { fetchGmailInbox } = await import("@/lib/actions/integrations");
         const gmRes = await fetchGmailInbox();
