@@ -1,0 +1,14 @@
+{
+  "id": "vid-1785656545041",
+  "brandName": "ZenBudget",
+  "format": "REEL_SHORT_1080x1920",
+  "topic": "Create video reel for ZenBudget",
+  "resolution": "1080x1920",
+  "fps": 60,
+  "durationSeconds": 12,
+  "script": "[SCENE 1 - HOOK (0-3s)]\nVisual: High-contrast dark glassmorphism interface displaying automated budget allocation.\nOverlay Text: \"POV: You let AI manage your money in 2026.\"\nAudio Voiceover (Aura): \"Stop tracking expenses manually. Meet ZenBudget.\"\n\n[SCENE 2 - PROBLEM (3-7s)]\nVisual: Messy spreadsheet vs 1-click AI dashboard.\nOverlay Text: \"90% of Gen Z hate manual spreadsheets.\"\nAudio Voiceover: \"No spreadsheets. No receipt hoarding. Just 100% automated financial intelligence.\"\n\n[SCENE 3 - SOLUTION & CTA (7-12s)]\nVisual: ZenBudget App Interface showing +$4,250 saved.\nOverlay Text: \"Link in bio to claim early VIP access.\"\nAudio Voiceover: \"Take control of your wealth today. Try ZenBudget now.\"",
+  "hasWatermark": false,
+  "folderPath": "/media/creatives/zenbudget/videos/2026-08-02",
+  "publicUrl": "/media/creatives/zenbudget/videos/2026-08-02/video_reel_short_1080x1920_1785656545040.json",
+  "createdAt": "2026-08-02T07:42:25.041Z"
+}
