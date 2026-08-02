@@ -26,5 +26,12 @@
     "type": "PDF",
     "updated": "Last week",
     "content": "# Supabase Environment Setup Walkthrough\n\n## Setup Instructions\n1. Configure `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `.env`.\n2. Apply migrations with Prisma ORM: `npx prisma db push`.\n3. Verify connection with `npx prisma studio`.\n"
+  },
+  {
+    "id": "5",
+    "title": "ZenBudget - Best Expense Tracker & Daily Budget Planner App Specification",
+    "type": "MARKDOWN",
+    "updated": "Just now (Live Verified)",
+    "content": "# ZenBudget Live Brand Intelligence & Feature Specification\n\n## Official Live Site:\nhttps://zenbudget-tracker.vercel.app/\n\n## Tagline:\n\"Track Every Rupee, Save Every Month — Best Expense Tracker & Daily Budget Planner App\"\n\n## Brand Palette:\n- **Theme Color**: `#22c55e` (Emerald Green)\n- **Background**: `#0a0f1e` (Deep Dark Slate)\n- **Text Color**: `#f0fdf4` / White\n\n## Target Audience:\nGen Z, Couples, Young Professionals, and Families in India & Worldwide.\n\n## Key Features & Value Propositions:\n1. **Daily Smart Spending Limit**: Real-time warnings whenever spending exceeds daily targets, helping users save up to 30% more.\n2. **AI Money Coach Guidance**: Personal AI assistant guiding budget allocations and wealth building.\n3. **Impulse Purchase Blocker (48-Hour Pause)**: Blocks impulsive spending by enforcing a 48-hour cool-off period.\n4. **Shared Couples Budgeting**: Real-time linked accounts for couples and families to track group expenses.\n5. **Weekly Money Wrapped**: Spotify-style animated story summarizing weekly savings and habits.\n6. **Multi-Currency & Multi-Language Support**: Complete Kharcha Tracker / Hisab Kitab support for Indian & Global users.\n"
   }
 ]
