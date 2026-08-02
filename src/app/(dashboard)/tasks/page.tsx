@@ -253,7 +253,7 @@ export default function TasksPage() {
                       )}
 
                       {/* Dependency indicators */}
-                      {task.dependencies.length > 0 && (
+                      {task.dependencies && task.dependencies.length > 0 && (
                         <div className="flex items-center gap-1 text-[9px] text-amber-500/80 bg-amber-500/5 border border-amber-500/10 px-1.5 py-0.5 rounded w-max font-medium">
                           <AlertCircle className="w-2.5 h-2.5" />
                           <span>Blocked ({task.dependencies.length})</span>
