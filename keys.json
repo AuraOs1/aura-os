@@ -1,8 +1,8 @@
 {
-  "geminiApiKey": "",
-  "openaiApiKey": "",
+  "geminiApiKey": "ENV_CONFIGURED",
+  "openaiApiKey": "ENV_CONFIGURED",
   "anthropicApiKey": "",
-  "groqApiKey": "",
+  "groqApiKey": "ENV_CONFIGURED",
   "ollamaEndpoint": "http://127.0.0.1:11434",
   "googleClientId": "ENV_CONFIGURED",
   "googleClientSecret": "ENV_CONFIGURED",
