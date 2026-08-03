@@ -262,14 +262,28 @@ export default function TasksPage() {
 
                       {/* Card footer details */}
                       <div className="flex items-center justify-between pt-2 border-t border-white/[0.04]">
-                        <div className="flex items-center gap-1 text-[9px] text-zinc-500">
+                        <div className="flex items-center gap-1.5 text-[9px] text-zinc-500">
                           {task.agent ? (
                             <>
                               <User className="w-2.5 h-2.5" />
                               <span className="text-zinc-400 font-medium">{task.agent.name}</span>
                             </>
                           ) : (
-                            <span className="italic text-zinc-600">Unassigned</span>
+                            <span className="italic text-zinc-600">Executive Agent</span>
+                          )}
+
+                          {task.status === "IN_PROGRESS" && (
+                            <button
+                              type="button"
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                await updateTaskStatus(task.id, "DONE");
+                                loadData();
+                              }}
+                              className="ml-2 text-[9px] font-bold text-accent bg-accent/10 border border-accent/30 px-2 py-0.5 rounded hover:bg-accent/20 transition-all cursor-pointer"
+                            >
+                              Mark Complete ✓
+                            </button>
                           )}
                         </div>
 
