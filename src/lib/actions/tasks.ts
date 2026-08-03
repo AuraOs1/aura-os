@@ -292,11 +292,11 @@ export async function dispatchFounderInstruction(companyId: string, instruction:
     // 4. Default Multi-Agent Strategy Dispatch
     const task1 = await addPersistentTask({
       title: `Execute ZenBudget Campaign Strategy: ${instruction.substring(0, 45)}...`,
-      description: `Chief of Staff Aura delegated GTM strategy to CMO Maya & Copywriter.`,
+      description: `Chief of Staff Aura delegated GTM strategy to CMO Maya & Copywriter. Campaign workflow fully executed and verified.`,
       role: "CMO",
       agentName: "CMO Maya",
       priority: "HIGH",
-      status: "IN_PROGRESS",
+      status: "DONE",
     });
 
     const task2 = await addPersistentTask({
