@@ -17,7 +17,6 @@ export interface GeneratedAdAsset {
   watermarkFree: boolean;
 }
 
-// Ensure local media folder exists
 function getCreativeFolder(brandName: string): string {
   const dateStr = new Date().toISOString().split("T")[0];
   const relativePath = `/media/creatives/${brandName.toLowerCase().replace(/[^a-z0-9]/g, "_")}/${dateStr}`;
@@ -38,7 +37,6 @@ export async function generateAdCreative(
   try {
     const folderPath = getCreativeFolder(brandName);
 
-    // Determine dimensions
     let dimensions = "1080x1080";
     let width = 1080;
     let height = 1080;
@@ -56,11 +54,6 @@ export async function generateAdCreative(
       height = 500;
     }
 
-    // High-Resolution SVG Watermark-Free Ad Canvas Template matching https://zenbudget-tracker.vercel.app/
-    const fileName = `ad_${platform.toLowerCase()}_${Date.now()}.svg`;
-    const fullFilePath = path.join(process.cwd(), "public", folderPath, fileName);
-    const publicUrl = `${folderPath}/${fileName}`;
-
     const brandColors: Record<string, { bg1: string; bg2: string; text: string; accent: string }> = {
       ZenBudget: { bg1: "#0a0f1e", bg2: "#052e16", text: "#f0fdf4", accent: "#22c55e" },
       "AURA OS": { bg1: "#1e1b4b", bg2: "#0f172a", text: "#f5f3ff", accent: "#6366f1" },
@@ -70,6 +63,11 @@ export async function generateAdCreative(
 
     const palette = brandColors[brandName] || brandColors["ZenBudget"];
 
+    // High-Resolution Watermark-Free Visual Image Asset
+    const fileName = `ad_${platform.toLowerCase()}_${Date.now()}.svg`;
+    const fullFilePath = path.join(process.cwd(), "public", folderPath, fileName);
+    const publicUrl = `${folderPath}/${fileName}`;
+
     const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -77,45 +75,50 @@ export async function generateAdCreative(
       <stop offset="100%" stop-color="${palette.bg2}" />
     </linearGradient>
     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="20" result="blur" />
+      <feGaussianBlur stdDeviation="25" result="blur" />
       <feComposite in="SourceGraphic" in2="blur" operator="over" />
     </filter>
   </defs>
 
-  <!-- Background -->
+  <!-- Background Canvas -->
   <rect width="100%" height="100%" fill="url(#bgGrad)" />
 
-  <!-- Decorative Glowing Orbs -->
-  <circle cx="${width * 0.82}" cy="${height * 0.2}" r="${width * 0.25}" fill="${palette.accent}" opacity="0.2" filter="url(#glow)" />
-  <circle cx="${width * 0.15}" cy="${height * 0.85}" r="${width * 0.2}" fill="${palette.accent}" opacity="0.12" filter="url(#glow)" />
+  <!-- Ambient Glowing Orbs -->
+  <circle cx="${width * 0.85}" cy="${height * 0.18}" r="${width * 0.3}" fill="${palette.accent}" opacity="0.25" filter="url(#glow)" />
+  <circle cx="${width * 0.12}" cy="${height * 0.85}" r="${width * 0.22}" fill="${palette.accent}" opacity="0.15" filter="url(#glow)" />
 
-  <!-- Brand Header Badge -->
-  <rect x="60" y="60" width="240" height="52" rx="26" fill="rgba(255,255,255,0.06)" stroke="${palette.accent}" stroke-opacity="0.5" stroke-width="1.5" />
-  <text x="180" y="93" font-family="'Manrope', 'Inter', sans-serif" font-size="16" font-weight="800" fill="${palette.accent}" text-anchor="middle" letter-spacing="2">ZENBUDGET AI</text>
+  <!-- Brand Badge Header -->
+  <rect x="60" y="60" width="260" height="56" rx="28" fill="rgba(255,255,255,0.08)" stroke="${palette.accent}" stroke-opacity="0.6" stroke-width="2" />
+  <text x="190" y="96" font-family="'Manrope', 'Inter', sans-serif" font-size="18" font-weight="800" fill="${palette.accent}" text-anchor="middle" letter-spacing="2">ZENBUDGET AI</text>
 
-  <!-- Main Headline from Live Site -->
-  <text x="60" y="${height * 0.38}" font-family="'Manrope', 'Inter', sans-serif" font-size="${height > 600 ? 46 : 28}" font-weight="800" fill="${palette.text}">
+  <!-- Visual Headline -->
+  <text x="60" y="${height * 0.38}" font-family="'Manrope', 'Inter', sans-serif" font-size="${height > 600 ? 52 : 30}" font-weight="800" fill="${palette.text}">
     Track Every Rupee.
   </text>
-  <text x="60" y="${height * 0.38 + (height > 600 ? 58 : 36)}" font-family="'Manrope', 'Inter', sans-serif" font-size="${height > 600 ? 46 : 28}" font-weight="800" fill="${palette.accent}">
+  <text x="60" y="${height * 0.38 + (height > 600 ? 64 : 40)}" font-family="'Manrope', 'Inter', sans-serif" font-size="${height > 600 ? 52 : 30}" font-weight="800" fill="${palette.accent}">
     Save Every Month.
   </text>
 
-  <!-- Key Features Bullet List -->
-  <text x="60" y="${height * 0.58}" font-family="'Manrope', sans-serif" font-size="${height > 600 ? 20 : 14}" font-weight="600" fill="rgba(255,255,255,0.85)">
-    ✓ Daily Smart Spending Limit Warning
+  <!-- Visual Feature Cards -->
+  <rect x="60" y="${height * 0.54}" width="${width - 120}" height="56" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" />
+  <text x="84" y="${height * 0.54 + 35}" font-family="'Manrope', sans-serif" font-size="${height > 600 ? 20 : 15}" font-weight="700" fill="#ffffff">
+    ⚡ Daily Smart Spending Limit Warnings
   </text>
-  <text x="60" y="${height * 0.58 + 35}" font-family="'Manrope', sans-serif" font-size="${height > 600 ? 20 : 14}" font-weight="600" fill="rgba(255,255,255,0.85)">
-    ✓ Impulse Buy Blocker (48-Hour Pause)
+
+  <rect x="60" y="${height * 0.54 + 68}" width="${width - 120}" height="56" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" />
+  <text x="84" y="${height * 0.54 + 103}" font-family="'Manrope', sans-serif" font-size="${height > 600 ? 20 : 15}" font-weight="700" fill="#ffffff">
+    🛑 48-Hour Impulse Buy Blocker
   </text>
-  <text x="60" y="${height * 0.58 + 70}" font-family="'Manrope', sans-serif" font-size="${height > 600 ? 20 : 14}" font-weight="600" fill="rgba(255,255,255,0.85)">
-    ✓ Shared Couples &amp; Family Budgeting
+
+  <rect x="60" y="${height * 0.54 + 136}" width="${width - 120}" height="56" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" />
+  <text x="84" y="${height * 0.54 + 171}" font-family="'Manrope', sans-serif" font-size="${height > 600 ? 20 : 15}" font-weight="700" fill="#ffffff">
+    👥 Real-Time Shared Couples Budgeting
   </text>
 
   <!-- Call to Action Button -->
-  <rect x="60" y="${height * 0.78}" width="${height > 600 ? 320 : 220}" height="${height > 600 ? 68 : 46}" rx="20" fill="${palette.accent}" />
-  <text x="${60 + (height > 600 ? 160 : 110)}" y="${height * 0.78 + (height > 600 ? 41 : 28)}" font-family="'Manrope', sans-serif" font-size="${height > 600 ? 18 : 14}" font-weight="800" fill="#000000" text-anchor="middle">
-    TRY ZENBUDGET FREE 🚀
+  <rect x="60" y="${height * 0.82}" width="${height > 600 ? 340 : 240}" height="${height > 600 ? 72 : 48}" rx="24" fill="${palette.accent}" />
+  <text x="${60 + (height > 600 ? 170 : 120)}" y="${height * 0.82 + (height > 600 ? 44 : 30)}" font-family="'Manrope', sans-serif" font-size="${height > 600 ? 20 : 15}" font-weight="800" fill="#000000" text-anchor="middle">
+    GET ZENBUDGET FREE 🚀
   </text>
 </svg>`;
 
@@ -139,7 +142,7 @@ export async function generateAdCreative(
 
     return {
       success: true,
-      message: `Live Brand Tailored Ad Asset created for ${brandName} and saved into folder: public${folderPath}/${fileName}`,
+      message: `Visual Ad Image Asset created for ${brandName} and saved into folder: public${folderPath}/${fileName}`,
       asset,
     };
   } catch (error: unknown) {
