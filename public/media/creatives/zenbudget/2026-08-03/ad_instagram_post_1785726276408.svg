@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1e" />
+      <stop offset="100%" stop-color="#052e16" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="25" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="100%" height="100%" fill="url(#bgGrad)" />
+
+  <!-- Ambient Glowing Orbs -->
+  <circle cx="918" cy="194.4" r="324" fill="#22c55e" opacity="0.25" filter="url(#glow)" />
+  <circle cx="129.6" cy="918" r="237.6" fill="#22c55e" opacity="0.15" filter="url(#glow)" />
+
+  <!-- Brand Badge Header -->
+  <rect x="60" y="60" width="260" height="56" rx="28" fill="rgba(255,255,255,0.08)" stroke="#22c55e" stroke-opacity="0.6" stroke-width="2" />
+  <text x="190" y="96" font-family="'Manrope', 'Inter', sans-serif" font-size="18" font-weight="800" fill="#22c55e" text-anchor="middle" letter-spacing="2">ZENBUDGET AI</text>
+
+  <!-- Visual Headline -->
+  <text x="60" y="410.4" font-family="'Manrope', 'Inter', sans-serif" font-size="52" font-weight="800" fill="#f0fdf4">
+    Track Every Rupee.
+  </text>
+  <text x="60" y="474.4" font-family="'Manrope', 'Inter', sans-serif" font-size="52" font-weight="800" fill="#22c55e">
+    Save Every Month.
+  </text>
+
+  <!-- Visual Feature Cards -->
+  <rect x="60" y="583.2" width="960" height="56" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" />
+  <text x="84" y="618.2" font-family="'Manrope', sans-serif" font-size="20" font-weight="700" fill="#ffffff">
+    ⚡ Daily Smart Spending Limit Warnings
+  </text>
+
+  <rect x="60" y="651.2" width="960" height="56" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" />
+  <text x="84" y="686.2" font-family="'Manrope', sans-serif" font-size="20" font-weight="700" fill="#ffffff">
+    🛑 48-Hour Impulse Buy Blocker
+  </text>
+
+  <rect x="60" y="719.2" width="960" height="56" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" />
+  <text x="84" y="754.2" font-family="'Manrope', sans-serif" font-size="20" font-weight="700" fill="#ffffff">
+    👥 Real-Time Shared Couples Budgeting
+  </text>
+
+  <!-- Call to Action Button -->
+  <rect x="60" y="885.5999999999999" width="340" height="72" rx="24" fill="#22c55e" />
+  <text x="230" y="929.5999999999999" font-family="'Manrope', sans-serif" font-size="20" font-weight="800" fill="#000000" text-anchor="middle">
+    GET ZENBUDGET FREE 🚀
+  </text>
+</svg>
