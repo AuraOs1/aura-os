@@ -1,0 +1,93 @@
+[
+  {
+    "id": "task-1785690007804",
+    "title": "CTO Software Verification & Environment Audit",
+    "description": "CTO Alex verifying live API connections and system heartbeats.",
+    "priority": "MEDIUM",
+    "status": "DONE",
+    "agentName": "CTO Alex",
+    "role": "CTO",
+    "createdAt": "2026-08-02T17:00:07.804Z"
+  },
+  {
+    "id": "task-1785690007786",
+    "title": "Execute ZenBudget Campaign Strategy: hii create ha logo...",
+    "description": "Chief of Staff Aura delegated GTM strategy to CMO Maya & Copywriter.",
+    "priority": "HIGH",
+    "status": "IN_PROGRESS",
+    "agentName": "CMO Maya",
+    "role": "CMO",
+    "createdAt": "2026-08-02T17:00:07.786Z"
+  },
+  {
+    "id": "task-1785686450716",
+    "title": "CTO Software Verification & Environment Audit",
+    "description": "CTO Alex verifying live API connections and system heartbeats.",
+    "priority": "MEDIUM",
+    "status": "DONE",
+    "agentName": "CTO Alex",
+    "role": "CTO",
+    "createdAt": "2026-08-02T16:00:50.717Z"
+  },
+  {
+    "id": "task-1785686450702",
+    "title": "Execute ZenBudget Campaign Strategy: I have received your directive but working...",
+    "description": "Chief of Staff Aura delegated GTM strategy to CMO Maya & Copywriter.",
+    "priority": "HIGH",
+    "status": "IN_PROGRESS",
+    "agentName": "CMO Maya",
+    "role": "CMO",
+    "createdAt": "2026-08-02T16:00:50.702Z"
+  },
+  {
+    "id": "task-1785686446022",
+    "title": "CTO Software Verification & Environment Audit",
+    "description": "CTO Alex verifying live API connections and system heartbeats.",
+    "priority": "MEDIUM",
+    "status": "DONE",
+    "agentName": "CTO Alex",
+    "role": "CTO",
+    "createdAt": "2026-08-02T16:00:46.022Z"
+  },
+  {
+    "id": "task-1785686446000",
+    "title": "Execute ZenBudget Campaign Strategy: But working...",
+    "description": "Chief of Staff Aura delegated GTM strategy to CMO Maya & Copywriter.",
+    "priority": "HIGH",
+    "status": "IN_PROGRESS",
+    "agentName": "CMO Maya",
+    "role": "CMO",
+    "createdAt": "2026-08-02T16:00:46.000Z"
+  },
+  {
+    "id": "task-101",
+    "title": "ZenBudget GenZ Acquisition Campaign & Ad Banners",
+    "description": "Generate high-resolution watermark-free ad banners matching live site theme (#22c55e).",
+    "priority": "HIGH",
+    "status": "DONE",
+    "agentName": "CMO Maya",
+    "role": "CMO",
+    "createdAt": "2026-08-02T16:00:46.000Z",
+    "outputArtifactUrl": "/media/creatives/zenbudget/2026-08-02/ad_instagram_post_1.svg"
+  },
+  {
+    "id": "task-102",
+    "title": "Playwright Browser Automation & Market Analysis",
+    "description": "Analyze competitor positioning and target audience specs for ZenBudget.",
+    "priority": "HIGH",
+    "status": "DONE",
+    "agentName": "CEO Sarah",
+    "role": "CEO",
+    "createdAt": "2026-08-02T15:30:46.000Z"
+  },
+  {
+    "id": "task-103",
+    "title": "CTO Alex Software Build & Terminal Execution",
+    "description": "Execute Next.js production build check and verify TypeScript compilation.",
+    "priority": "MEDIUM",
+    "status": "DONE",
+    "agentName": "CTO Alex",
+    "role": "CTO",
+    "createdAt": "2026-08-02T15:00:46.000Z"
+  }
+]
