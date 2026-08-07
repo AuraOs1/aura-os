@@ -13,10 +13,22 @@ export function Shell({ children, initialCompanies }: ShellProps) {
   const [companies] = useState(initialCompanies);
   const [activeCompany, setActiveCompany] = useState(companies[0] || { id: "", name: "No Company", tagline: "", workspaceId: "" });
 
+  React.useEffect(() => {
+    const savedName = localStorage.getItem("active_company_name");
+    if (savedName) {
+      const found = companies.find(c => c.name.toLowerCase() === savedName.toLowerCase());
+      if (found) {
+        setActiveCompany(found);
+      }
+    }
+  }, [companies]);
+
   const handleSelectCompany = (id: string) => {
     const selected = companies.find(c => c.id === id);
     if (selected) {
       setActiveCompany(selected);
+      localStorage.setItem("active_company_name", selected.name);
+      window.dispatchEvent(new Event("aura_company_changed"));
     }
   };
 
