@@ -1,37 +1,30 @@
 [
   {
     "id": "1",
-    "title": "Corporate Code Guidelines & Lint Rules",
-    "type": "WIKI",
-    "updated": "3 hours ago",
-    "content": "# Corporate Code Guidelines & Lint Rules\n\n## Overview\nThis document outlines standard coding practices for all AI workers in ZenBudget.\n\n### Core Architecture Rules:\n1. **Never guess API parameters**: Always inspect exact schemas before calling DB or LLM APIs.\n2. **Strict Flow Control**: Enforce clean try/catch blocks with user-friendly diagnostics.\n3. **No Superficial Symptom Patches**: When an exception occurs, resolve the root cause.\n\n### Frontend Standards:\n- Use HSL tailored color variables.\n- Maintain glassmorphism design aesthetic across dark interfaces.\n"
+    "title": "ZenBudget - Complete A-to-Z Brand Specification & Knowledge Documentation",
+    "type": "BRAND_SPEC",
+    "updated": "Just now (Live Verified)",
+    "content": "# ZenBudget - Complete A-to-Z Enterprise Brand Knowledge Documentation\n\n## 1. Brand Overview\nZenBudget is India's leading AI-powered Expense Tracker & Daily Budget Planner App designed specifically for Gen Z, couples, young professionals, and modern families.\n\n### Official Live URL:\nhttps://zenbudget-tracker.vercel.app/\n\n### Official Tagline:\n\"Track Every Rupee, Save Every Month — Best Expense Tracker & Daily Budget Planner App\"\n\n---\n\n## 2. Visual Brand Identity & Design System\n- **Primary Accent Color**: `#22c55e` (Emerald Green - symbol of wealth, growth, and financial clarity)\n- **Background Theme**: `#0a0f1e` (Deep Obsidian Slate - premium dark mode interface)\n- **Secondary Colors**: `#10b981` (Teal Green), `#052e16` (Deep Emerald Gradient)\n- **Typography**: Manrope & Inter (Modern, geometric, highly legible)\n\n---\n\n## 3. Core Product Features & Value Propositions\n1. **Daily Smart Spending Limits**: Real-time automated spending warnings when daily expenses cross target limits.\n2. **48-Hour Impulse Purchase Blocker**: Enforces a compulsory 48-hour pause timer on non-essential purchases to eliminate impulse buying.\n3. **Real-Time Shared Couples Budgeting**: Linked financial dashboards allowing couples and roommates to split, monitor, and manage shared household expenses.\n4. **Weekly Spotify-Style Money Wrapped**: Animated weekly story recap summarizing savings milestones, top spending categories, and financial streak badges.\n5. **Kharcha Tracker / Hisab Kitab Support**: Complete multi-currency and regional language support for Indian regional transactions.\n\n---\n\n## 4. Target Audience & Positioning\n- **Primary Persona**: Gen Z & Millennials (Ages 18-32)\n- **Tone of Voice**: Empathetic, energetic, direct, data-backed, non-judgmental.\n- **Keywords**: Kharcha Tracker, Hisab Kitab, Daily Expense Manager, Save Money India, Budgeting App for Couples.\n"
   },
   {
     "id": "2",
-    "title": "Agent Memory Engine Design Requirements",
-    "type": "API_DOC",
-    "updated": "Yesterday",
-    "content": "# Agent Memory Engine Design Requirements\n\n## Memory Architecture\nThe memory engine provides short-term and long-term context recall for AI executives.\n\n### Memory Layers:\n- **Short-Term Memory**: Stores recent 5 task execution logs and strategy tickets.\n- **Long-Term Memory**: Vector embeddings stored in Supabase PostgreSQL tables.\n- **Brand Guide Knowledge**: Accessible to CEO and CTO for strategic alignment.\n"
+    "title": "AURA OS - Complete A-to-Z Operating System Architecture",
+    "type": "SYSTEM_ARCH",
+    "updated": "Just now",
+    "content": "# AURA OS - Complete A-to-Z AI Enterprise Operating System Architecture\n\n## 1. System Vision\nAURA OS is the world's first autonomous AI Company Operating System where a 25-agent C-Suite workforce executes company strategy under a single interface supervised by Chief of Staff Aura.\n\n---\n\n## 2. Executive Council Architecture\n1. **Chief of Staff (Aura)**: Single point of contact for Founder Chandan. Synthesizes vision and delegates autonomously.\n2. **CEO (Sarah)**: Strategic direction, priority alignment, and roadmap execution.\n3. **CTO (Alex)**: Terminal execution, software build pipelines, and system integrity.\n4. **CMO (Maya)**: Acquisition campaigns, social publishing, and ad creative generation.\n5. **COO (David)**: Operational workflows, task scheduling, and performance monitoring.\n6. **CFO (Felix)**: Token budget tracking, cost optimization, and resource allocation.\n\n---\n\n## 3. Security & Anti-Bot Protection Rules\n- 99.7% Stealth Human Emulation Protection on all social dispatches.\n- Zero-deletion sandbox mode protecting PC filesystem integrity.\n"
   },
   {
     "id": "3",
-    "title": "Framer Motion Spacing Tokens Guide",
-    "type": "MARKDOWN",
-    "updated": "3 days ago",
-    "content": "# Framer Motion Spacing Tokens Guide\n\n## Motion Standards\nUse Framer Motion spring transitions for smooth layout changes:\n\n```tsx\nconst containerVariants = {\n  hidden: { opacity: 0 },\n  show: { opacity: 1, transition: { staggerChildren: 0.05 } }\n};\n```\n"
+    "title": "LeadFlow AI - Complete A-to-Z B2B Acquisition Engine",
+    "type": "MARKETING_DOC",
+    "updated": "Just now",
+    "content": "# LeadFlow AI - Complete A-to-Z B2B Acquisition Engine\n\n## 1. Overview\nLeadFlow AI is an autonomous B2B lead enrichment and outreach platform that identifies decision-makers, enriches emails, and dispatches multi-channel sequences.\n\n---\n\n## 2. Channels & Strategies\n- **LinkedIn Enrichment**: Automated profile analysis and personalized icebreakers.\n- **Email Warmup Pipeline**: Automated deliverability warming with Resend API.\n- **Conversion Copy**: High-converting pain-point focused messaging.\n"
   },
   {
     "id": "4",
-    "title": "Supabase Environment Setup Walkthrough",
-    "type": "PDF",
-    "updated": "Last week",
-    "content": "# Supabase Environment Setup Walkthrough\n\n## Setup Instructions\n1. Configure `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `.env`.\n2. Apply migrations with Prisma ORM: `npx prisma db push`.\n3. Verify connection with `npx prisma studio`.\n"
-  },
-  {
-    "id": "5",
-    "title": "ZenBudget - Best Expense Tracker & Daily Budget Planner App Specification",
-    "type": "MARKDOWN",
-    "updated": "Just now (Live Verified)",
-    "content": "# ZenBudget Live Brand Intelligence & Feature Specification\n\n## Official Live Site:\nhttps://zenbudget-tracker.vercel.app/\n\n## Tagline:\n\"Track Every Rupee, Save Every Month — Best Expense Tracker & Daily Budget Planner App\"\n\n## Brand Palette:\n- **Theme Color**: `#22c55e` (Emerald Green)\n- **Background**: `#0a0f1e` (Deep Dark Slate)\n- **Text Color**: `#f0fdf4` / White\n\n## Target Audience:\nGen Z, Couples, Young Professionals, and Families in India & Worldwide.\n\n## Key Features & Value Propositions:\n1. **Daily Smart Spending Limit**: Real-time warnings whenever spending exceeds daily targets, helping users save up to 30% more.\n2. **AI Money Coach Guidance**: Personal AI assistant guiding budget allocations and wealth building.\n3. **Impulse Purchase Blocker (48-Hour Pause)**: Blocks impulsive spending by enforcing a 48-hour cool-off period.\n4. **Shared Couples Budgeting**: Real-time linked accounts for couples and families to track group expenses.\n5. **Weekly Money Wrapped**: Spotify-style animated story summarizing weekly savings and habits.\n6. **Multi-Currency & Multi-Language Support**: Complete Kharcha Tracker / Hisab Kitab support for Indian & Global users.\n"
+    "title": "CS Design - Complete A-to-Z UI/UX Design System Specification",
+    "type": "DESIGN_SPEC",
+    "updated": "Just now",
+    "content": "# CS Design - Complete A-to-Z UI/UX Studio Specification\n\n## 1. Aesthetic Guidelines\n- Glassmorphism & Neo-brutalism accents with subtle glow gradients.\n- Responsive 1080x1080, 1080x1920, and 1584x396 visual assets.\n- Export format: High-Res `.png` and `.jpg` image files.\n"
   }
 ]
