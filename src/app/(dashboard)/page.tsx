@@ -43,8 +43,58 @@ export default function DashboardPage() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [voiceUpdateActive, setVoiceUpdateActive] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(true);
+  const [activeCompanyName, setActiveCompanyName] = useState("ZenBudget");
+  const [generatedAdUrl, setGeneratedAdUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("active_company_name");
+      if (saved) setActiveCompanyName(saved);
+
+      const handleCompanyChange = () => {
+        const updated = localStorage.getItem("active_company_name") || "ZenBudget";
+        setActiveCompanyName(updated);
+      };
+
+      window.addEventListener("aura_company_changed", handleCompanyChange);
+      return () => window.removeEventListener("aura_company_changed", handleCompanyChange);
+    }
+  }, []);
 
   const companyId = "default-company-id";
+
+  const companySpecs: Record<string, { tagline: string; priorities: string[]; risks: string[]; opportunities: string[]; recommendations: string[] }> = {
+    ZenBudget: {
+      tagline: "Track Every Rupee, Save Every Month — Best Expense Tracker App",
+      priorities: ["Launch ZenBudget GenZ acquisition campaign", "Verify Playwright browser automation suite"],
+      risks: ["OpenAI API billing quota low; auto-routed to Gemini 2.5"],
+      opportunities: ["Rising trend in AI receipt scanning on Product Hunt"],
+      recommendations: ["Delegate GTM copy scripts to CMO Maya & Frontend Lead"],
+    },
+    "AURA OS": {
+      tagline: "The Autonomous Operating System for AI-First Companies",
+      priorities: ["Scale 25-Agent C-Suite Workforce", "Verify GitHub Auto-Sync & Deployment Engine"],
+      risks: ["Prisma SQLite local db using operational memory fallback"],
+      opportunities: ["High demand for multi-agent autonomous enterprise platforms"],
+      recommendations: ["Expand CTO Alex terminal execution capabilities"],
+    },
+    "LeadFlow AI": {
+      tagline: "Autonomous B2B Lead Engine & Cold Outreach Pipeline",
+      priorities: ["Enrich 500 Verified B2B Decision Makers", "Execute Anti-Bot Stealth Email Outreach"],
+      risks: ["Domain warm-up daily rate limit cap"],
+      opportunities: ["High response rates on GenZ SaaS founder leads"],
+      recommendations: ["Deploy CMO Maya cold outreach email sequence"],
+    },
+    "CS Design": {
+      tagline: "Autonomous Studio UI/UX & High-Res Brand Design System",
+      priorities: ["Render 3D Landing Page Canvas Mockups", "Export Watermark-Free Vector SVG Design Tokens"],
+      risks: ["High GPU memory usage on 4K canvas renders"],
+      opportunities: ["Trending dark glassmorphism SaaS aesthetics"],
+      recommendations: ["Delegate design tokens export to Head of Design"],
+    },
+  };
+
+  const currentCompanySpec = companySpecs[activeCompanyName] || companySpecs["ZenBudget"];
 
   const executiveCouncil = [
     { name: "Aura", role: "CHIEF_OF_STAFF", title: "Chief of Staff (AI Co-Founder)", status: "ACTIVE", health: 100, confidence: "99%", avatar: "🌟" },
@@ -175,10 +225,13 @@ export default function DashboardPage() {
 
       if (lowerCmd.includes("ad") || lowerCmd.includes("creative") || lowerCmd.includes("banner")) {
         const { generateAdCreative } = await import("@/lib/actions/adCreative");
-        const adRes = await generateAdCreative("ZenBudget", "INSTAGRAM_POST", userCmd);
-        const text = `Watermark-Free High-Res Ad Creative Generated!\nBrand: ZenBudget | Platform: Instagram Post (1080x1080)\nSaved To: public${adRes.asset?.folderPath}\nHeadline: "${adRes.asset?.headline}"`;
+        const adRes = await generateAdCreative(activeCompanyName, "INSTAGRAM_POST", userCmd);
+        const text = `Watermark-Free High-Res Ad Creative Generated!\nBrand: ${activeCompanyName} | Platform: Instagram Post (1080x1080)\nSaved To: public${adRes.asset?.folderPath}\nHeadline: "${adRes.asset?.headline}"`;
         setCosMessage(text);
-        speakAuraVoice("High resolution watermark free ad creative generated and saved in your local folder manager.");
+        if (adRes.asset?.imageUrl) {
+          setGeneratedAdUrl(adRes.asset.imageUrl);
+        }
+        speakAuraVoice(`High resolution watermark free ad creative generated for ${activeCompanyName} and displayed live on your screen.`);
         setInstruction("");
         return;
       }
@@ -199,6 +252,19 @@ export default function DashboardPage() {
         const text = `Social Post Auto-Published with Anti-Bot Protection!\nPlatform: Instagram | Brand: ZenBudget\nStealth Score: ${pubRes.publishResult?.stealthScore}\nLive URL: ${pubRes.publishResult?.publishedUrl}`;
         setCosMessage(text);
         speakAuraVoice("Social post published with 99.7 percent human emulation stealth protection.");
+        setInstruction("");
+        return;
+      }
+
+      if (lowerCmd.includes("browser") || lowerCmd.includes("pc") || lowerCmd.includes("operate") || lowerCmd.includes("playwright")) {
+        const { executeAutonomousBrowserTask } = await import("@/lib/automation/browserControl");
+        const bRes = await executeAutonomousBrowserTask("https://gemini.google.com/", userCmd, activeCompanyName);
+        const text = `Autonomous PC Browser Control Executed!\nSecurity Status: ${bRes.securityStatus}\nTarget URL: ${bRes.targetUrl}\nSaved Artifact: public${bRes.outputArtifactUrl}`;
+        setCosMessage(text);
+        if (bRes.outputArtifactUrl) {
+          setGeneratedAdUrl(bRes.outputArtifactUrl);
+        }
+        speakAuraVoice(`Autonomous browser control task executed safely on your PC. Screenshot artifact rendered live.`);
         setInstruction("");
         return;
       }
@@ -350,24 +416,59 @@ export default function DashboardPage() {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="p-4 rounded-xl bg-accent/10 border border-accent/30 text-zinc-200 text-xs leading-relaxed flex items-start gap-3 mt-3"
+              className="p-4 rounded-xl bg-accent/10 border border-accent/30 text-zinc-200 text-xs leading-relaxed flex items-start justify-between gap-3 mt-3"
             >
-              <div className="w-6 h-6 rounded-full bg-accent/20 text-accent font-bold flex items-center justify-center shrink-0 text-xs">
-                A
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-accent uppercase tracking-wider block">Chief of Staff Spoken Response</span>
-                  {isSpeaking && <span className="text-[9px] text-zinc-400 animate-pulse">🔊 Playing Audio...</span>}
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-accent/20 text-accent font-bold flex items-center justify-center shrink-0 text-xs">
+                  A
                 </div>
-                <p className="font-medium text-white">{cosMessage}</p>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-accent uppercase tracking-wider block">Chief of Staff Spoken Response</span>
+                    {isSpeaking && <span className="text-[9px] text-zinc-400 animate-pulse">🔊 Playing Audio...</span>}
+                  </div>
+                  <p className="font-medium text-white">{cosMessage}</p>
+
+                  {generatedAdUrl && (
+                    <div className="mt-3 p-3 rounded-xl bg-black/40 border border-white/10 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold text-accent uppercase tracking-wider">Generated Visual Ad Banner</span>
+                        <a
+                          href={generatedAdUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[10px] text-accent hover:underline font-semibold flex items-center gap-1"
+                        >
+                          <span>Open Fullscreen</span>
+                          <ArrowUpRight className="w-3 h-3" />
+                        </a>
+                      </div>
+                      <div className="rounded-lg overflow-hidden border border-white/10 max-w-sm bg-[#0a0f1e]">
+                        <img
+                          src={generatedAdUrl}
+                          alt="Generated Ad Creative"
+                          className="w-full h-auto object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
+
+              <button
+                type="button"
+                onClick={() => speakAuraVoice(cosMessage)}
+                className="px-3 py-1.5 rounded-lg bg-accent/20 hover:bg-accent/30 border border-accent/40 text-accent font-bold text-[10px] flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
+              >
+                <Volume2 className="w-3.5 h-3.5" />
+                <span>Replay Voice</span>
+              </button>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
 
-      {/* CHIEF OF STAFF DAILY BRIEF */}
+      {/* CHIEF OF STAFF DYNAMIC DAILY BRIEF */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-4 gap-4 text-left">
         <div className="p-4 rounded-2xl bg-[#111113] border border-white/5 space-y-2">
           <div className="flex items-center gap-2 text-accent text-xs font-bold uppercase tracking-wider">
@@ -375,14 +476,12 @@ export default function DashboardPage() {
             <span>Today's Priorities</span>
           </div>
           <ul className="text-xs text-zinc-300 space-y-1.5 font-medium">
-            <li className="flex items-start gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-1.5 shrink-0" />
-              <span>Launch ZenBudget GenZ acquisition campaign</span>
-            </li>
-            <li className="flex items-start gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-1.5 shrink-0" />
-              <span>Verify Playwright browser automation suite</span>
-            </li>
+            {currentCompanySpec.priorities.map((item, idx) => (
+              <li key={idx} className="flex items-start gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent mt-1.5 shrink-0" />
+                <span>{item}</span>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -392,10 +491,12 @@ export default function DashboardPage() {
             <span>Risks & Warnings</span>
           </div>
           <ul className="text-xs text-zinc-300 space-y-1.5 font-medium">
-            <li className="flex items-start gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0" />
-              <span>OpenAI API billing quota low; auto-routed to Gemini 2.5</span>
-            </li>
+            {currentCompanySpec.risks.map((item, idx) => (
+              <li key={idx} className="flex items-start gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0" />
+                <span>{item}</span>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -405,10 +506,12 @@ export default function DashboardPage() {
             <span>Opportunities</span>
           </div>
           <ul className="text-xs text-zinc-300 space-y-1.5 font-medium">
-            <li className="flex items-start gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
-              <span>Rising trend in AI receipt scanning on Product Hunt</span>
-            </li>
+            {currentCompanySpec.opportunities.map((item, idx) => (
+              <li key={idx} className="flex items-start gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
+                <span>{item}</span>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -418,7 +521,7 @@ export default function DashboardPage() {
             <span>Recommendations</span>
           </div>
           <p className="text-xs text-zinc-300 font-medium leading-relaxed">
-            Delegate GTM copy scripts to CMO Maya & Frontend Lead.
+            {currentCompanySpec.recommendations[0]}
           </p>
         </div>
       </motion.div>
