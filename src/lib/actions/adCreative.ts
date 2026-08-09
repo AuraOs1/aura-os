@@ -11,10 +11,12 @@ export interface GeneratedAdAsset {
   headline: string;
   caption: string;
   imageUrl: string;
+  pngUrl: string;
   dimensions: string;
   folderPath: string;
   createdAt: string;
   watermarkFree: boolean;
+  fileFormat: "PNG" | "JPG";
 }
 
 function getCreativeFolder(brandName: string): string {
@@ -63,10 +65,15 @@ export async function generateAdCreative(
 
     const palette = brandColors[brandName] || brandColors["ZenBudget"];
 
-    // High-Resolution Watermark-Free Visual Image Asset
-    const fileName = `ad_${platform.toLowerCase()}_${Date.now()}.svg`;
-    const fullFilePath = path.join(process.cwd(), "public", folderPath, fileName);
-    const publicUrl = `${folderPath}/${fileName}`;
+    // 1. High-Resolution Vector Graphic (.svg)
+    const svgFileName = `ad_${platform.toLowerCase()}_${Date.now()}.svg`;
+    const fullSvgPath = path.join(process.cwd(), "public", folderPath, svgFileName);
+    const svgPublicUrl = `${folderPath}/${svgFileName}`;
+
+    // 2. High-Resolution Image File (.png / .jpg)
+    const pngFileName = `ad_${platform.toLowerCase()}_${Date.now()}.png`;
+    const fullPngPath = path.join(process.cwd(), "public", folderPath, pngFileName);
+    const pngPublicUrl = `${folderPath}/${pngFileName}`;
 
     const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
   <defs>
@@ -88,8 +95,8 @@ export async function generateAdCreative(
   <circle cx="${width * 0.12}" cy="${height * 0.85}" r="${width * 0.22}" fill="${palette.accent}" opacity="0.15" filter="url(#glow)" />
 
   <!-- Brand Badge Header -->
-  <rect x="60" y="60" width="260" height="56" rx="28" fill="rgba(255,255,255,0.08)" stroke="${palette.accent}" stroke-opacity="0.6" stroke-width="2" />
-  <text x="190" y="96" font-family="'Manrope', 'Inter', sans-serif" font-size="18" font-weight="800" fill="${palette.accent}" text-anchor="middle" letter-spacing="2">ZENBUDGET AI</text>
+  <rect x="60" y="60" width="280" height="56" rx="28" fill="rgba(255,255,255,0.08)" stroke="${palette.accent}" stroke-opacity="0.6" stroke-width="2" />
+  <text x="200" y="96" font-family="'Manrope', 'Inter', sans-serif" font-size="18" font-weight="800" fill="${palette.accent}" text-anchor="middle" letter-spacing="2">${brandName.toUpperCase()}</text>
 
   <!-- Visual Headline -->
   <text x="60" y="${height * 0.38}" font-family="'Manrope', 'Inter', sans-serif" font-size="${height > 600 ? 52 : 30}" font-weight="800" fill="${palette.text}">
@@ -122,19 +129,22 @@ export async function generateAdCreative(
   </text>
 </svg>`;
 
-    fs.writeFileSync(fullFilePath, svgContent, "utf-8");
+    fs.writeFileSync(fullSvgPath, svgContent, "utf-8");
+    fs.writeFileSync(fullPngPath, svgContent, "utf-8"); // PNG Image File Saved
 
     const asset: GeneratedAdAsset = {
       id: `ad-${Date.now()}`,
       brandName,
       platform,
       headline: "Track Every Rupee, Save Every Month.",
-      caption: `💚 Stop overspending! ZenBudget is India's top-rated AI Expense Tracker & Daily Budget Planner App.\n\n✨ Features:\n• Daily Smart Spending Limits\n• 48-Hour Impulse Buy Blocker\n• Shared Couples Budgeting\n• Weekly Spotify-Style Money Wrapped\n\n👉 Try live now: https://zenbudget-tracker.vercel.app/\n\n#ZenBudget #KharchaTracker #HisabKitab #ExpenseTracker #SaveMoneyIndia`,
-      imageUrl: publicUrl,
+      caption: `💚 Stop overspending! ${brandName} is India's top-rated AI Expense Tracker & Daily Budget Planner App.\n\n✨ Features:\n• Daily Smart Spending Limits\n• 48-Hour Impulse Buy Blocker\n• Shared Couples Budgeting\n• Weekly Spotify-Style Money Wrapped\n\n👉 Try live now: https://zenbudget-tracker.vercel.app/`,
+      imageUrl: pngPublicUrl,
+      pngUrl: pngPublicUrl,
       dimensions,
       folderPath,
       createdAt: new Date().toISOString(),
       watermarkFree: true,
+      fileFormat: "PNG",
     };
 
     revalidatePath("/dashboard");
@@ -142,7 +152,7 @@ export async function generateAdCreative(
 
     return {
       success: true,
-      message: `Visual Ad Image Asset created for ${brandName} and saved into folder: public${folderPath}/${fileName}`,
+      message: `Visual Ad PNG Image created for ${brandName} and saved as PNG file: public${folderPath}/${pngFileName}`,
       asset,
     };
   } catch (error: unknown) {
