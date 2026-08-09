@@ -45,6 +45,54 @@ export default function DashboardPage() {
   const [speechSupported, setSpeechSupported] = useState(true);
   const [activeCompanyName, setActiveCompanyName] = useState("ZenBudget");
   const [generatedAdUrl, setGeneratedAdUrl] = useState<string | null>(null);
+  const [draftsList, setDraftsList] = useState<any[]>([]);
+  const [pipelineRunning, setPipelineRunning] = useState(false);
+
+  const loadDrafts = async () => {
+    try {
+      const { getLocalDrafts } = await import("@/lib/actions/draftApproval");
+      const list = await getLocalDrafts();
+      setDraftsList(list);
+    } catch (e) {}
+  };
+
+  useEffect(() => {
+    loadDrafts();
+  }, []);
+
+  const handleLaunchPipeline = async () => {
+    setPipelineRunning(true);
+    try {
+      const { executeFullContentPipeline } = await import("@/lib/actions/contentEngine");
+      const res = await executeFullContentPipeline(activeCompanyName, "Launch viral campaign pipeline");
+      if (res.success && res.result) {
+        setCosMessage(`Full AI Content Pipeline Executed for ${activeCompanyName}!\nHook: "${res.result.hook}"\nThumbnail PNG: ${res.result.thumbnailUrl}\nDraft queued for Founder Approval!`);
+        if (res.result.thumbnailUrl) {
+          setGeneratedAdUrl(res.result.thumbnailUrl);
+        }
+        speakAuraVoice(`Full AI Content Pipeline executed for ${activeCompanyName}. Draft is queued for your approval.`);
+        await loadDrafts();
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setPipelineRunning(false);
+    }
+  };
+
+  const handleApproveDraft = async (draftId: string) => {
+    try {
+      const { approveAndPostDraft } = await import("@/lib/actions/draftApproval");
+      const res = await approveAndPostDraft(draftId);
+      if (res.success) {
+        setCosMessage(res.message || "Draft Approved & Published with 100% Anti-Ban Protection!");
+        speakAuraVoice("Draft approved and published with 100 percent anti ban protection.");
+        await loadDrafts();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -466,6 +514,62 @@ export default function DashboardPage() {
             </motion.div>
           )}
         </AnimatePresence>
+      </motion.div>
+
+      {/* DRAFT CONTENT APPROVAL QUEUE & PIPELINE LAUNCHER */}
+      <motion.div variants={itemVariants} className="p-6 rounded-2xl bg-[#111113] border border-white/10 space-y-4 text-left shadow-xl">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-accent" />
+            <h3 className="text-sm font-bold text-white">Content Approval Queue ({draftsList.filter(d => d.status === "PENDING_APPROVAL").length})</h3>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleLaunchPipeline}
+            disabled={pipelineRunning}
+            className="px-4 py-2 rounded-xl bg-accent text-black font-bold text-xs hover:bg-accent/80 transition-all flex items-center gap-2 cursor-pointer shadow-lg disabled:opacity-50"
+          >
+            <Zap className="w-3.5 h-3.5" />
+            <span>{pipelineRunning ? "Generating Content Pipeline..." : "🚀 Launch Full AI Content Pipeline"}</span>
+          </button>
+        </div>
+
+        {draftsList.filter(d => d.status === "PENDING_APPROVAL").length === 0 ? (
+          <p className="text-xs text-zinc-500 italic">No pending drafts. Click "Launch Full AI Content Pipeline" to generate viral reels & ad creatives!</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            {draftsList.filter(d => d.status === "PENDING_APPROVAL").map((draft) => (
+              <div key={draft.id} className="p-4 rounded-xl bg-[#18181B] border border-white/10 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-accent uppercase tracking-wider">{draft.brandName} • {draft.assetType}</span>
+                  <span className="text-[9px] px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold">DRAFT READY</span>
+                </div>
+
+                <h4 className="text-xs font-bold text-white leading-snug">{draft.title}</h4>
+                <p className="text-[11px] text-zinc-400 line-clamp-2 leading-relaxed">{draft.caption}</p>
+
+                {draft.assetUrl && (
+                  <div className="w-full h-32 rounded-lg overflow-hidden border border-white/10 bg-black/40">
+                    <img src={draft.assetUrl} alt={draft.title} className="w-full h-full object-cover" />
+                  </div>
+                )}
+
+                <div className="pt-2 flex items-center justify-between border-t border-white/5">
+                  <span className="text-[9px] text-zinc-500">{new Date(draft.createdAt).toLocaleTimeString()}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleApproveDraft(draft.id)}
+                    className="px-3 py-1.5 rounded-lg bg-emerald-500 text-black font-bold text-xs hover:bg-emerald-400 transition-all flex items-center gap-1.5 cursor-pointer shadow-md"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>✅ Approve & Post</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </motion.div>
 
       {/* CHIEF OF STAFF DYNAMIC DAILY BRIEF */}
