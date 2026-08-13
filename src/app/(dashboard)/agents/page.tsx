@@ -23,6 +23,10 @@ export default function AgentsPage() {
   const [agents, setAgents] = useState<DatabaseAgent[]>([]);
   const [loading, setLoading] = useState(true);
   const [showWorkers, setShowWorkers] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState<DatabaseAgent | any | null>(null);
+  const [agentPrompt, setAgentPrompt] = useState("");
+  const [executingTask, setExecutingTask] = useState(false);
+  const [agentOutput, setAgentOutput] = useState<string | null>(null);
 
   const companyId = "default-company-id";
 
@@ -120,14 +124,17 @@ export default function AgentsPage() {
           <span>Level 1: Chief of Staff (AI Co-Founder & Single Founder Interface)</span>
         </div>
 
-        <div className="p-6 rounded-2xl bg-[#111113] border-2 border-amber-400/40 shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div
+          onClick={() => { setSelectedAgent(chiefOfStaff); setAgentOutput(null); }}
+          className="p-6 rounded-2xl bg-[#111113] border-2 border-amber-400/40 hover:border-amber-400 cursor-pointer transition-all shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
+        >
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-amber-400/15 border border-amber-400/30 flex items-center justify-center text-xl font-bold text-amber-400 shadow-lg">
               🌟
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-white">{chiefOfStaff.name}</h3>
+                <h3 className="text-base font-bold text-white group-hover:text-amber-300 transition-colors">{chiefOfStaff.name}</h3>
                 <span className="text-[9px] px-2 py-0.5 rounded-full font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 uppercase">
                   CO-FOUNDER
                 </span>
@@ -138,8 +145,8 @@ export default function AgentsPage() {
 
           <div className="flex items-center gap-3">
             <span className="text-[10px] text-zinc-500">Provider: <strong className="text-accent">{chiefOfStaff.modelProvider} ({chiefOfStaff.modelName})</strong></span>
-            <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-success/15 border border-success/30 text-success uppercase">
-              ACTIVE CO-FOUNDER
+            <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-amber-400 text-black uppercase cursor-pointer hover:bg-amber-300">
+              DIRECT TASK ⚡
             </span>
           </div>
         </div>
@@ -152,21 +159,24 @@ export default function AgentsPage() {
           <span>Level 2: Chief Executive Officer (Reports ONLY to Chief of Staff)</span>
         </div>
 
-        <div className="p-5 rounded-2xl bg-[#111113] border border-accent/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div
+          onClick={() => { setSelectedAgent(ceo); setAgentOutput(null); }}
+          className="p-5 rounded-2xl bg-[#111113] border border-accent/30 hover:border-accent cursor-pointer transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
+        >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-lg">
               👑
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white">{ceo.name}</h3>
+              <h3 className="text-sm font-bold text-white group-hover:text-accent transition-colors">{ceo.name}</h3>
               <p className="text-xs text-zinc-400">{ceo.mission}</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             <span className="text-[10px] text-zinc-500">Provider: <strong className="text-white">{ceo.modelProvider}</strong></span>
-            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-success/15 border border-success/30 text-success uppercase">
-              REPORTS TO CHIEF OF STAFF
+            <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-accent text-black uppercase cursor-pointer hover:bg-accent/80">
+              DIRECT TASK ⚡
             </span>
           </div>
         </div>
@@ -181,19 +191,23 @@ export default function AgentsPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {executiveCouncil.map((exec) => (
-            <div key={exec.id} className="p-4 rounded-xl bg-[#111113] border border-white/5 flex items-center justify-between">
+            <div
+              key={exec.id}
+              onClick={() => { setSelectedAgent(exec); setAgentOutput(null); }}
+              className="p-4 rounded-xl bg-[#111113] border border-white/5 hover:border-accent/40 cursor-pointer transition-all flex items-center justify-between group"
+            >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-sm">
                   {exec.role === "CTO" ? "💻" : exec.role === "CMO" ? "🚀" : exec.role === "COO" ? "⚡" : "📊"}
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white">{exec.name} ({exec.role})</h4>
+                  <h4 className="text-xs font-bold text-white group-hover:text-accent transition-colors">{exec.name} ({exec.role})</h4>
                   <span className="text-[10px] text-zinc-500">{exec.modelProvider} • {exec.modelName}</span>
                 </div>
               </div>
 
-              <span className="text-[9px] px-2 py-0.5 rounded-full font-bold bg-white/5 border border-white/10 text-zinc-400 uppercase">
-                EXECUTIVE
+              <span className="text-[9px] px-2.5 py-1 rounded-full font-bold bg-white/10 border border-white/20 text-accent group-hover:bg-accent group-hover:text-black uppercase transition-all">
+                DIRECT TASK
               </span>
             </div>
           ))}
@@ -219,31 +233,118 @@ export default function AgentsPage() {
               className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3"
             >
               {workers.map((worker) => (
-                <div key={worker.id} className="p-3.5 rounded-xl bg-[#111113] border border-white/5 flex items-center justify-between">
+                <div
+                  key={worker.id}
+                  onClick={() => { setSelectedAgent(worker); setAgentOutput(null); }}
+                  className="p-3.5 rounded-xl bg-[#111113] border border-white/5 hover:border-accent/40 cursor-pointer transition-all flex items-center justify-between group"
+                >
                   <div className="flex items-center gap-2.5">
-                    <UserCheck className="w-4 h-4 text-zinc-500" />
+                    <UserCheck className="w-4 h-4 text-zinc-500 group-hover:text-accent transition-colors" />
                     <div>
-                      <h5 className="text-xs font-semibold text-white">{worker.name}</h5>
+                      <h5 className="text-xs font-semibold text-white group-hover:text-accent transition-colors">{worker.name}</h5>
                       <span className="text-[9px] text-zinc-500">{worker.role}</span>
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => handleToggleStatus(worker.id, worker.status)}
-                    className={`text-[9px] px-2 py-0.5 rounded-full font-bold border cursor-pointer ${
-                      worker.status === "WORKING"
-                        ? "bg-success/15 border-success/30 text-success"
-                        : "bg-white/5 border-white/10 text-zinc-500"
-                    }`}
-                  >
-                    {worker.status}
-                  </button>
+                  <span className="text-[9px] px-2 py-0.5 rounded-full font-bold bg-white/5 border border-white/10 text-zinc-400 uppercase">
+                    DIRECT TASK
+                  </span>
                 </div>
               ))}
             </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
+
+      {/* AGENT DIRECT EXECUTION MODAL */}
+      <AnimatePresence>
+        {selectedAgent && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-lg rounded-2xl bg-[#111113] border border-accent/40 p-6 space-y-5 text-left shadow-2xl relative"
+            >
+              <button
+                type="button"
+                onClick={() => setSelectedAgent(null)}
+                className="absolute top-4 right-4 p-1.5 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-white transition-all cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent text-lg font-bold">
+                  🤖
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white flex items-center gap-2">
+                    <span>{selectedAgent.name}</span>
+                    <span className="text-[9px] px-2 py-0.5 rounded-full font-bold bg-accent/20 text-accent border border-accent/30 uppercase">
+                      {selectedAgent.role}
+                    </span>
+                  </h3>
+                  <p className="text-xs text-zinc-400 mt-0.5">{selectedAgent.mission || "Autonomous AI Executive Worker"}</p>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-black/40 border border-white/5 text-xs text-zinc-300 space-y-1">
+                <div className="flex justify-between text-[10px] text-zinc-500">
+                  <span>Model Provider: <strong className="text-accent">{selectedAgent.modelProvider || "openai"}</strong></span>
+                  <span>Status: <strong className="text-emerald-400">ACTIVE 100%</strong></span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-white block">Give Direct Instruction to {selectedAgent.name}:</label>
+                <textarea
+                  rows={3}
+                  value={agentPrompt}
+                  onChange={(e) => setAgentPrompt(e.target.value)}
+                  placeholder={`e.g. "Execute detailed audit for ${selectedAgent.name}"`}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#18181B] border border-white/10 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-accent"
+                />
+              </div>
+
+              {agentOutput && (
+                <div className="p-3.5 rounded-xl bg-accent/10 border border-accent/30 text-xs text-zinc-200 font-mono whitespace-pre-wrap leading-relaxed max-h-40 overflow-y-auto">
+                  {agentOutput}
+                </div>
+              )}
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedAgent(null)}
+                  className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-zinc-400 hover:text-white"
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  disabled={executingTask || !agentPrompt.trim()}
+                  onClick={async () => {
+                    setExecutingTask(true);
+                    setAgentOutput(null);
+                    const { executeAgentTask } = await import("@/lib/actions/agents");
+                    const res = await executeAgentTask(selectedAgent.name, selectedAgent.role, agentPrompt);
+                    setExecutingTask(false);
+                    if (res.success && res.output) {
+                      setAgentOutput(res.output);
+                      setAgentPrompt("");
+                    }
+                  }}
+                  className="px-5 py-2 rounded-xl bg-accent text-black font-bold text-xs hover:bg-accent/80 transition-all flex items-center gap-1.5 cursor-pointer shadow-lg disabled:opacity-50"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>{executingTask ? "Executing Task..." : `Run ${selectedAgent.name} Execution`}</span>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
